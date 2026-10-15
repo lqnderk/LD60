@@ -74,3 +74,11 @@ crashlytics-build.properties
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# AI instructions
+GEMINI.md
+AGENTS.md
+.agent/
+.agents/
+.gemini/
+
