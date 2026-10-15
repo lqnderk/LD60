@@ -1,0 +1,13 @@
+# Unity-specific git attributes
+# Auto-detect text files and perform LF normalization
+* text=auto
+
+# Unity YAML files (Scenes, Prefabs, Assets, Meta)
+*.cs diff=csharp text
+*.cginc text
+*.shader text
+*.unity text merge=unityyamlmerge
+*.prefab text merge=unityyamlmerge
+*.asset text merge=unityyamlmerge
+*.meta text merge=unityyamlmerge
+*.mat text merge=unityyamlmerge
