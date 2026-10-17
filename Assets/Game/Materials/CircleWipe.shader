@@ -2,6 +2,7 @@ Shader "UI/CircleWipe"
 {
     Properties
     {
+        [HideInInspector] _MainTex ("Texture", 2D) = "white" {}
         _Color ("Fade Color", Color) = (0.07, 0.07, 0.1, 1)
         _AccentColor ("Accent Color", Color) = (0.95, 0.35, 0.45, 1)
         _Progress ("Progress", Range(0, 1)) = 0
@@ -48,6 +49,7 @@ Shader "UI/CircleWipe"
                 float4 color : COLOR;
             };
 
+            sampler2D _MainTex;
             fixed4 _Color;
             fixed4 _AccentColor;
             float _Progress;
