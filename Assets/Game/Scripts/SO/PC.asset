@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PC
   m_EditorClassIdentifier: Assembly-CSharp::DeviceType
   deviceName: PC
-  minClick: 4
-  maxClick: 6
-  reward: 10
+  minClick: 6
+  maxClick: 8
+  reward: 15
   prefab: {fileID: 1930139177390796623, guid: 80f3e6a53af1c764387f445b939958f2, type: 3}

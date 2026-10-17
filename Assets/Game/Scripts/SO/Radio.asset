@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a17d68b4e37d5e043aaf413afccf8f47, type: 3}
   m_Name: Radio
   m_EditorClassIdentifier: Assembly-CSharp::DeviceType
-  deviceName: PC
-  minClick: 4
-  maxClick: 6
-  reward: 10
-  prefab: {fileID: 1930139177390796623, guid: 80f3e6a53af1c764387f445b939958f2, type: 3}
+  deviceName: Radio
+  minClick: 2
+  maxClick: 4
+  reward: 5
+  prefab: {fileID: 7193588307855526399, guid: 4bbab48979f38ea409d5e8fb3dbf02c5, type: 3}

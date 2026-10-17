@@ -11,6 +11,9 @@ public class RepairManager : MonoBehaviour
     [SerializeField] public Transform tablePoint;
     [SerializeField] public Transform removePoint;
 
+    [Header("Manager")]
+    [SerializeField] private MoneyManager moneyManager;
+
     public bool IsDeviceOnTable = false;
 
     private GameObject newDevice;
@@ -27,8 +30,12 @@ public class RepairManager : MonoBehaviour
             IsDeviceOnTable = true;
 
             int clicks = Random.Range(device.minClick, device.maxClick + 1);
-            newDevice.GetComponent<RepairDevice>().requiredClicks = clicks;
-            newDevice.GetComponent<RepairDevice>().repairManager = this;
+            RepairDevice repair = newDevice.GetComponent<RepairDevice>();
+
+            repair.requiredClicks = clicks;
+            repair.repairManager = this;
+            repair.reward = device.reward;
+            repair.moneyManager = moneyManager;
         }
     }
 
