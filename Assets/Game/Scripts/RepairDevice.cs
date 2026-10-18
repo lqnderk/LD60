@@ -31,6 +31,7 @@ public class RepairDevice : MonoBehaviour
         currentClicks++;
         SpawnScrew();
         ScreenShake.Instance.Shake();
+        AudioManager.Instance.PlayRepairClick();
 
         if (currentClicks >= requiredClicks)
         {

@@ -35,6 +35,7 @@ public class MoneyManager : MonoBehaviour
         {
             balance -= amount;
             UpdateUI();
+            AudioManager.Instance.PlayPurchase();
             return true;
         }
 

@@ -85,9 +85,33 @@ namespace Game.UI
 
             GameObject message = Instantiate(prefab, messageZone.transform);
             message.transform.localScale = KeepPrefabScale(prefab.transform.localScale);
+            InitializeButtons(message);
             messages.Add(message);
+            AudioManager.Instance.PlayMessage(messageZone.activeInHierarchy);
 
             Layout();
+        }
+
+        public void Remove(GameObject message)
+        {
+            if (message == null)
+            {
+                return;
+            }
+
+            messages.Remove(message);
+            Destroy(message);
+            Layout();
+        }
+
+        private void InitializeButtons(GameObject message)
+        {
+            var buttons = message.GetComponentsInChildren<MessageCloseButton>(true);
+
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                buttons[i].Initialize(message, this);
+            }
         }
 
         private Vector3 KeepPrefabScale(Vector3 scale)
