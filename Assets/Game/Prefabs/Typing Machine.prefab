@@ -134,7 +134,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &-6231606642354241380
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -195,4 +195,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RepairDevice
   currentClicks: 0
   requiredClicks: 0
+  reward: 0
   repairManager: {fileID: 0}
+  moneyManager: {fileID: 0}

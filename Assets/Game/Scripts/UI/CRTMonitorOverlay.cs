@@ -113,8 +113,9 @@ namespace Game.UI
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
 
-            var raycaster = overlayObject.AddComponent<GraphicRaycaster>();
-            raycaster.enabled = false;
+            var canvasGroup = overlayObject.AddComponent<CanvasGroup>();
+            canvasGroup.blocksRaycasts = false;
+            canvasGroup.interactable = false;
 
             var imageObject = new GameObject("CRT_Image");
             imageObject.transform.SetParent(overlayObject.transform, false);

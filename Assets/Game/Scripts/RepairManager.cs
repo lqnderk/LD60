@@ -14,9 +14,16 @@ public class RepairManager : MonoBehaviour
     [Header("Manager")]
     [SerializeField] private MoneyManager moneyManager;
 
+    [Header("Auto New Device")]
+    [SerializeField] private int autoNewDeviceAmount = 1000;
+    [SerializeField] private float newDeviceDelay = 0.8f;
+
     public bool IsDeviceOnTable = false;
+    public RepairDevice CurrentRepairDevice { get; private set; }
 
     private GameObject newDevice;
+    private bool autoNewDevice;
+    private float newDeviceTimer;
 
     public void NewDevice()
     {
@@ -36,6 +43,8 @@ public class RepairManager : MonoBehaviour
             repair.repairManager = this;
             repair.reward = device.reward;
             repair.moneyManager = moneyManager;
+
+            CurrentRepairDevice = repair;
         }
     }
 
@@ -45,11 +54,49 @@ public class RepairManager : MonoBehaviour
         {
             removeDevice();    
         }
+
+        UpdateAutoNewDevice();
+    }
+
+    private void UpdateAutoNewDevice()
+    {
+        if (autoNewDevice == false)
+        {
+            if (moneyManager != null && moneyManager.balance >= autoNewDeviceAmount)
+            {
+                autoNewDevice = true;
+            }
+
+            return;
+        }
+
+        if (IsDeviceOnTable == true)
+        {
+            newDeviceTimer = 0f;
+            return;
+        }
+
+        newDeviceTimer += Time.deltaTime;
+
+        if (newDeviceTimer >= newDeviceDelay)
+        {
+            newDeviceTimer = 0f;
+            NewDevice();
+        }
     }
 
     public void removeDevice()
     {
-            newDevice.GetComponent<DeviceMover>().SlideTo(removePoint.position);
-            IsDeviceOnTable = false;
+        if (newDevice != null)
+        {
+            var mover = newDevice.GetComponent<DeviceMover>();
+            if (mover != null)
+            {
+                mover.SlideTo(removePoint.position);
+            }
+        }
+
+        IsDeviceOnTable = false;
+        CurrentRepairDevice = null;
     }
 }

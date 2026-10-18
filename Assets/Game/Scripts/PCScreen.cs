@@ -1,27 +1,47 @@
 using UnityEngine;
+using Game.UI;
 
 public class PCScreen : MonoBehaviour
 {
     public GameObject ComputerScreen;
     public GameObject arrow;
 
-    void Start()
+    private void Start()
     {
-        ComputerScreen.SetActive(false);
-    }
-
-    void OnMouseDown()
-    {
-        ComputerScreen.SetActive(true);
-        arrow.SetActive(false);
-    }
-
-    void Update()
-    {
-        if (ComputerScreen.activeSelf && Input.GetKeyDown(KeyCode.Escape))
+        if (ComputerScreen != null)
         {
             ComputerScreen.SetActive(false);
-            arrow.SetActive(true);
+        }
+    }
+
+    private void OnMouseDown()
+    {
+        if (ComputerScreen != null)
+        {
+            ComputerScreen.SetActive(true);
+        }
+
+        if (arrow != null)
+        {
+            arrow.SetActive(false);
+        }
+    }
+
+    private void Update()
+    {
+        if (ComputerScreen != null && ComputerScreen.activeSelf && Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (UIWindow.HasActiveWindows)
+            {
+                return;
+            }
+
+            ComputerScreen.SetActive(false);
+
+            if (arrow != null)
+            {
+                arrow.SetActive(true);
+            }
         }
     }
 }
