@@ -98,7 +98,13 @@ namespace Game.UI
                 }
                 else
                 {
-                    var shader = Shader.Find("UI/CircleWipe");
+                    Shader shader = Resources.Load<Shader>("Shaders/CircleWipe");
+
+                    if (shader == null)
+                    {
+                        shader = Shader.Find("UI/CircleWipe");
+                    }
+
                     if (shader != null)
                     {
                         runtimeMaterial = new Material(shader);
@@ -111,9 +117,13 @@ namespace Game.UI
                 runtimeMaterial.SetColor(ColorProperty, fadeColor);
                 runtimeMaterial.SetColor(AccentColorProperty, accentColor);
                 fadeImage.material = runtimeMaterial;
+                fadeImage.color = Color.white;
+            }
+            else
+            {
+                fadeImage.color = Color.clear;
             }
 
-            fadeImage.color = Color.white;
             fadeImage.raycastTarget = false;
         }
 

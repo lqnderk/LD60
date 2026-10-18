@@ -94,11 +94,22 @@ namespace Game.UI
                 }
                 else
                 {
-                    var shader = Shader.Find("UI/CRTMonitor");
+                    Shader shader = Resources.Load<Shader>("Shaders/CRTMonitor");
+
+                    if (shader == null)
+                    {
+                        shader = Shader.Find("UI/CRTMonitor");
+                    }
+
                     if (shader != null)
                     {
                         runtimeMaterial = new Material(shader);
                     }
+                }
+
+                if (runtimeMaterial == null)
+                {
+                    return;
                 }
             }
 
