@@ -7,7 +7,7 @@ public class Target : MonoBehaviour
     public GameObject goToPCScreen;
     public int targetAmount = 200;
     public int midTargetAmount = 1000;
-    public int ultimateTargetAmount = 50000;
+    public int ultimateTargetAmount = 20000;
 
     private int completedStages;
     private bool finalTargetComplete;

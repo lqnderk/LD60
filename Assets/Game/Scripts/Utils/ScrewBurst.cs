@@ -33,8 +33,10 @@ public class ScrewBurst : MonoBehaviour
     [SerializeField] private MoneyManager moneyManager;
 
     private readonly List<Screw> screws = new List<Screw>();
+    private readonly Stack<Screw> pool = new Stack<Screw>();
     private Sprite centeredSprite;
     private Vector2 goldenHalfSize;
+    private Transform poolRoot;
 
     private class Screw
     {
@@ -56,6 +58,9 @@ public class ScrewBurst : MonoBehaviour
         {
             goldenHalfSize = (Vector2)centeredSprite.bounds.extents * clickPadding;
         }
+
+        var container = new GameObject("ScrewPool");
+        poolRoot = container.transform;
     }
 
     private void OnDestroy()
@@ -68,6 +73,11 @@ public class ScrewBurst : MonoBehaviour
         if (centeredSprite != null)
         {
             Destroy(centeredSprite);
+        }
+
+        if (poolRoot != null)
+        {
+            Destroy(poolRoot.gameObject);
         }
     }
 
@@ -116,34 +126,66 @@ public class ScrewBurst : MonoBehaviour
         }
 
         bool golden = Random.value < goldenChance;
+        Screw screw = pool.Count > 0 ? pool.Pop() : CreateScrew();
 
-        var piece = new GameObject(golden ? "GoldenScrew" : "Screw");
-        piece.transform.position = new Vector3(position.x, position.y, depth);
-        piece.transform.localScale = Vector3.one * scale * (golden ? goldenScale : 1f);
-        piece.transform.rotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
+        Transform piece = screw.transform;
+        piece.gameObject.SetActive(true);
+        piece.position = new Vector3(position.x, position.y, depth);
+        piece.localScale = Vector3.one * scale * (golden ? goldenScale : 1f);
+        piece.rotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
 
-        var spriteRenderer = piece.AddComponent<SpriteRenderer>();
-        spriteRenderer.sprite = centeredSprite;
-        spriteRenderer.sortingOrder = golden ? goldenSortingOrder : sortingOrder;
-        spriteRenderer.color = golden ? goldenColor : Color.white;
+        screw.renderer.sprite = centeredSprite;
+        screw.renderer.sortingOrder = golden ? goldenSortingOrder : sortingOrder;
+        screw.renderer.color = golden ? goldenColor : Color.white;
 
         float horizontal = Random.Range(-sideSpeed, sideSpeed);
         float vertical = upSpeed * Random.Range(1f - speedVariation, 1f + speedVariation);
 
-        screws.Add(new Screw
+        screw.velocity = new Vector2(horizontal, vertical);
+        screw.spin = Random.Range(-spinSpeed, spinSpeed);
+        screw.age = 0f;
+        screw.golden = golden;
+        screw.collected = false;
+
+        screws.Add(screw);
+    }
+
+    private Screw CreateScrew()
+    {
+        var piece = new GameObject("Screw");
+        piece.transform.SetParent(poolRoot, false);
+        piece.transform.localScale = Vector3.one * scale;
+
+        var spriteRenderer = piece.AddComponent<SpriteRenderer>();
+        spriteRenderer.sprite = centeredSprite;
+
+        piece.SetActive(false);
+
+        return new Screw
         {
             transform = piece.transform,
-            renderer = spriteRenderer,
-            velocity = new Vector2(horizontal, vertical),
-            spin = Random.Range(-spinSpeed, spinSpeed),
-            age = 0f,
-            golden = golden,
-            collected = false
-        });
+            renderer = spriteRenderer
+        };
     }
 
     private void TryCollectGolden()
     {
+        bool hasGolden = false;
+
+        for (int i = 0; i < screws.Count; i++)
+        {
+            if (screws[i].golden && !screws[i].collected)
+            {
+                hasGolden = true;
+                break;
+            }
+        }
+
+        if (!hasGolden)
+        {
+            return;
+        }
+
         Camera[] cameras = Camera.allCameras;
 
         for (int i = 0; i < screws.Count; i++)
@@ -211,8 +253,11 @@ public class ScrewBurst : MonoBehaviour
 
     private void DestroyScrew(int index)
     {
-        Destroy(screws[index].transform.gameObject);
+        Screw screw = screws[index];
+        screw.transform.gameObject.SetActive(false);
+
         screws.RemoveAt(index);
+        pool.Push(screw);
     }
 
     private static void SetAlpha(Screw screw, float alpha)

@@ -65,8 +65,12 @@ namespace Game.UI
                 return;
             }
 
-            cameras.Clear();
-            cameras.AddRange(Camera.allCameras);
+            if (!isShaking)
+            {
+                cameras.Clear();
+                cameras.AddRange(Camera.allCameras);
+            }
+
             elapsed = 0f;
             isShaking = true;
         }

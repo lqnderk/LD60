@@ -66,12 +66,6 @@ namespace Game.UI
                 return;
             }
 
-            var behaviours = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
-            if (behaviours == null || behaviours.Length == 0)
-            {
-                return;
-            }
-
             Vector3 screenPoint = Input.mousePosition;
             IWorldClickTarget best = null;
             int bestLayer = int.MinValue;
@@ -80,33 +74,25 @@ namespace Game.UI
             for (int c = 0; c < cameras.Length; c++)
             {
                 var cam = cameras[c];
-                if (cam == null)
+                if (cam == null || !cam.isActiveAndEnabled)
                 {
                     continue;
                 }
 
                 Vector3 world = cam.ScreenToWorldPoint(screenPoint);
-                Vector2 point = new Vector2(world.x, world.y);
+                var hits = Physics2D.OverlapPointAll(new Vector2(world.x, world.y));
 
-                for (int i = 0; i < behaviours.Length; i++)
+                for (int i = 0; i < hits.Length; i++)
                 {
-                    if (behaviours[i] is not IWorldClickTarget target)
+                    var hit = hits[i];
+                    var target = hit.GetComponent<IWorldClickTarget>();
+
+                    if (target == null)
                     {
                         continue;
                     }
 
-                    var shape = behaviours[i].GetComponent<Collider2D>();
-                    if (shape == null || !shape.enabled || !shape.gameObject.activeInHierarchy)
-                    {
-                        continue;
-                    }
-
-                    if (!shape.OverlapPoint(point))
-                    {
-                        continue;
-                    }
-
-                    var sprite = behaviours[i].GetComponent<SpriteRenderer>();
+                    var sprite = hit.GetComponent<SpriteRenderer>();
                     int layer = sprite != null ? SortingLayer.GetLayerValueFromID(sprite.sortingLayerID) : 0;
                     int order = sprite != null ? sprite.sortingOrder : 0;
 
