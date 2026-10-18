@@ -1,3 +1,4 @@
+using Game.UI;
 using UnityEngine;
 
 public class ShopManager : MonoBehaviour
@@ -50,6 +51,7 @@ public class ShopManager : MonoBehaviour
     [Header("Managers")]
     [SerializeField] private MoneyManager moneyManager;
     [SerializeField] private RepairManager repairManager;
+    [SerializeField] private MessageSpawner messageSpawner;
 
     private int incomeLevel = 0;
     private int autoRepairLevel = 0;
@@ -71,6 +73,11 @@ public class ShopManager : MonoBehaviour
         if (repairManager == null)
         {
             repairManager = FindFirstObjectByType<RepairManager>();
+        }
+
+        if (messageSpawner == null)
+        {
+            messageSpawner = FindFirstObjectByType<MessageSpawner>();
         }
     }
 
@@ -269,6 +276,12 @@ public class ShopManager : MonoBehaviour
     {
         if (autoRepairLevel <= 0)
         {
+            return;
+        }
+
+        if (messageSpawner != null && messageSpawner.IsSpamming)
+        {
+            autoClickTimer = 0f;
             return;
         }
 

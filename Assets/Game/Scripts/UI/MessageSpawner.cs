@@ -6,8 +6,8 @@ namespace Game.UI
     public class MessageSpawner : MonoBehaviour
     {
         [SerializeField] private GameObject messageZone;
+        [SerializeField] private GameObject pcScreen;
         [SerializeField] private GameObject[] messagePrefabs;
-        [SerializeField] private Target target;
 
         [Header("Timing")]
         [SerializeField] private float minInterval = 5f;
@@ -39,13 +39,20 @@ namespace Game.UI
         private float fullTimer;
         private float spamTimer;
         private bool spamming;
-        private bool zoneWasActive;
+        private bool unlocked;
+
+        public bool IsSpamming => spamming;
 
         private void Awake()
         {
-            if (target == null)
+            if (pcScreen == null)
             {
-                target = FindFirstObjectByType<Target>();
+                PCScreen screen = FindFirstObjectByType<PCScreen>(FindObjectsInactive.Include);
+
+                if (screen != null)
+                {
+                    pcScreen = screen.ComputerScreen;
+                }
             }
 
             if (moneyManager == null)
@@ -68,12 +75,12 @@ namespace Game.UI
                 return;
             }
 
-            if (messageZone.activeInHierarchy)
+            if (!unlocked && (pcScreen == null || pcScreen.activeInHierarchy))
             {
-                zoneWasActive = true;
+                unlocked = true;
             }
 
-            if (!IsUnlocked)
+            if (!unlocked)
             {
                 timer = Random.Range(minInterval, maxInterval);
                 return;
@@ -89,8 +96,6 @@ namespace Game.UI
             timer = Random.Range(minInterval, maxInterval);
             Spawn();
         }
-
-        private bool IsUnlocked => zoneWasActive && target != null && target.FirstTargetReached;
 
         private void Spawn()
         {
@@ -198,6 +203,7 @@ namespace Game.UI
 
             SortingBand.ApplyTo(spam, spamSortingOrder);
             NeutralizeButtons(spam);
+            AddBlocker(spam);
 
             spamMessages.Add(spam);
 
@@ -234,6 +240,42 @@ namespace Game.UI
             for (int i = 0; i < buttons.Length; i++)
             {
                 buttons[i].Initialize(null, this);
+            }
+        }
+
+        private void AddBlocker(GameObject spam)
+        {
+            SpriteRenderer[] sprites = spam.GetComponentsInChildren<SpriteRenderer>(true);
+
+            if (sprites.Length == 0)
+            {
+                return;
+            }
+
+            Bounds bounds = sprites[0].bounds;
+
+            for (int i = 1; i < sprites.Length; i++)
+            {
+                bounds.Encapsulate(sprites[i].bounds);
+            }
+
+            Vector3 scale = spam.transform.lossyScale;
+            float scaleX = Mathf.Abs(scale.x) > 0f ? Mathf.Abs(scale.x) : 1f;
+            float scaleY = Mathf.Abs(scale.y) > 0f ? Mathf.Abs(scale.y) : 1f;
+
+            BoxCollider2D blocker = spam.GetComponent<BoxCollider2D>();
+
+            if (blocker == null)
+            {
+                blocker = spam.AddComponent<BoxCollider2D>();
+            }
+
+            blocker.size = new Vector2(bounds.size.x / scaleX, bounds.size.y / scaleY);
+            blocker.offset = spam.transform.InverseTransformPoint(bounds.center);
+
+            if (spam.GetComponent<ClickBlocker>() == null)
+            {
+                spam.AddComponent<ClickBlocker>();
             }
         }
 
