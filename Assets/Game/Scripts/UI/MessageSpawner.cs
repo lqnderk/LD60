@@ -116,7 +116,8 @@ namespace Game.UI
 
             GameObject message = Instantiate(prefab, messageZone.transform);
             message.transform.localScale = KeepPrefabScale(prefab.transform.localScale, messageZone);
-            SortingBand.ApplyTo(message, messageSortingOrder);
+            SortingStabilizer.Ensure();
+            SortingBand.ApplyTo(message, SortingStabilizer.TopOrder + messageSortingOrder);
             InitializeButtons(message);
             messages.Add(message);
             AudioManager.Instance.PlayMessage(messageZone.activeInHierarchy);
@@ -201,7 +202,8 @@ namespace Game.UI
                 area.center.z);
             spam.transform.rotation = Quaternion.Euler(0f, 0f, Random.Range(-5f, 5f));
 
-            SortingBand.ApplyTo(spam, spamSortingOrder);
+            SortingStabilizer.Ensure();
+            SortingBand.ApplyTo(spam, SortingStabilizer.TopOrder + spamSortingOrder);
             NeutralizeButtons(spam);
             AddBlocker(spam);
 
@@ -272,6 +274,7 @@ namespace Game.UI
 
             blocker.size = new Vector2(bounds.size.x / scaleX, bounds.size.y / scaleY);
             blocker.offset = spam.transform.InverseTransformPoint(bounds.center);
+            blocker.isTrigger = true;
 
             if (spam.GetComponent<ClickBlocker>() == null)
             {

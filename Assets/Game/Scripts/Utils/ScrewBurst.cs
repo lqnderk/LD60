@@ -135,7 +135,8 @@ public class ScrewBurst : MonoBehaviour
         piece.rotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
 
         screw.renderer.sprite = centeredSprite;
-        screw.renderer.sortingOrder = golden ? goldenSortingOrder : sortingOrder;
+        SortingStabilizer.Ensure();
+        screw.renderer.sortingOrder = SortingStabilizer.TopOrder + (golden ? goldenSortingOrder : sortingOrder);
         screw.renderer.color = golden ? goldenColor : Color.white;
 
         float horizontal = Random.Range(-sideSpeed, sideSpeed);
